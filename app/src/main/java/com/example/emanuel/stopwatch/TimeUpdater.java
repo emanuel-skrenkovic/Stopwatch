@@ -4,13 +4,11 @@ import android.os.AsyncTask;
 import android.widget.TextView;
 
 public class TimeUpdater extends AsyncTask<Void, String, Void> {
+
     private TextView timer;
-    private String minutes;
-    private String seconds;
-    private String milliseconds;
 
     public TimeUpdater(TextView timer){
-        this.timer= timer;
+        this.timer = timer;
     }
 
     @Override
@@ -19,11 +17,12 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
         while(!(this.isCancelled())){
             long timeDiff = (System.nanoTime() - startTime);
 
-            minutes = String.format("%2.1s", Double.toString(convertToMinutes(timeDiff))).replace(" ", "0");
+            //have to format to precision 1 otherwise the minutes round up at 30 seconds
+            String minutes = String.format("%2.1s", Double.toString(convertToMinutes(timeDiff))).replace(" ", "0");
 
-            seconds = Long.toString(convertToSeconds(timeDiff));
+            String seconds = Long.toString(convertToSeconds(timeDiff));
 
-            milliseconds = Long.toString(convertToMilliseconds(timeDiff));
+            String milliseconds = Long.toString(convertToMilliseconds(timeDiff));
 
             this.publishProgress(minutes + ":" + formatSeconds(seconds) + ":" + formatMilliseconds(milliseconds));
         }
@@ -53,16 +52,18 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
         return timeDiff / 6e10;
     }
 
-    // limits the number of digits in milliseconds to 3
     private String formatMilliseconds(String milliseconds){
         if(milliseconds.length() > 3) {
-            return format(milliseconds.substring(milliseconds.length() - 3), 2);
+            return format(milliseconds.substring(milliseconds.length() - 3), 3);
         }else{
-            return format(milliseconds, 2);
+            return format(milliseconds, 3);
         }
     }
 
     private String formatSeconds(String seconds){
+        String[] time = ((String) timer.getText()).split(":");
+        String minutes = time[0];
+
         if(Integer.parseInt(seconds) >= 60){
             Integer result = Integer.parseInt(seconds) - Integer.parseInt(minutes) * 60;
             return format(result.toString(), 2);
