@@ -6,25 +6,30 @@ import android.widget.TextView;
 public class TimeUpdater extends AsyncTask<Void, String, Void> {
 
     private TextView timer;
+    private Time startTime;
 
-    public TimeUpdater(TextView timer){
+    public TimeUpdater(TextView timer) {
         this.timer = timer;
+        startTime = new Time((String) timer.getText());
     }
 
     @Override
-    protected Void doInBackground(Void... params){
-        long startTime = System.nanoTime();
+    protected Void doInBackground(Void... params) {
+        long startCount = System.nanoTime();
+
         while(!(this.isCancelled())){
-            long timeDiff = (System.nanoTime() - startTime);
+            double timeDiff = System.nanoTime() - startCount +
+                            (startTime.getMinutes() * 6e10) +
+                            (startTime.getSeconds() * 1e9) +
+                            (startTime.getMilliseconds() * 1e6);
 
-            //have to format to precision 1 otherwise the minutes round up at 30 seconds
-            String minutes = String.format("%2.1s", Double.toString(convertToMinutes(timeDiff))).replace(" ", "0");
+            Double minutes = timeDiff / 6e10;
+            Double seconds = timeDiff / 1e9;
+            Double milliseconds = timeDiff / 1e6;
 
-            String seconds = Long.toString(convertToSeconds(timeDiff));
-
-            String milliseconds = Long.toString(convertToMilliseconds(timeDiff));
-
-            this.publishProgress(minutes + ":" + formatSeconds(seconds) + ":" + formatMilliseconds(milliseconds));
+            this.publishProgress(formatMinutes(minutes) + ":" +
+                    formatSeconds(seconds, minutes) + ":" +
+                    formatMilliseconds(milliseconds));
         }
         return null;
     }
@@ -35,44 +40,37 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
     }
 
     @Override
-    protected void onProgressUpdate(String... values){
+    protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
         timer.setText(values[0]);
     }
 
-    private long convertToSeconds(long timeDiff){
-        return timeDiff / 1000000000;
+    private String formatMinutes(Double minutes){
+        return format(Integer.toString(minutes.intValue()), 2);
     }
 
-    private long convertToMilliseconds(long time){
-        return time / 1000000;
-    }
-
-    private double convertToMinutes(long timeDiff){
-        return timeDiff / 6e10;
-    }
-
-    private String formatMilliseconds(String milliseconds){
-        if(milliseconds.length() > 3) {
-            return format(milliseconds.substring(milliseconds.length() - 3), 3);
-        }else{
-            return format(milliseconds, 3);
-        }
-    }
-
-    private String formatSeconds(String seconds){
-        String[] time = ((String) timer.getText()).split(":");
-        String minutes = time[0];
-
-        if(Integer.parseInt(seconds) >= 60){
-            Integer result = Integer.parseInt(seconds) - Integer.parseInt(minutes) * 60;
+    private String formatSeconds(Double seconds, Double minutes) {
+        if(seconds.intValue() >= 60){
+            Integer result = seconds.intValue() - minutes.intValue() * 60;
             return format(result.toString(), 2);
         }else{
-            return format(seconds, 2);
+            Integer result = seconds.intValue();
+            return format(result.toString(), 2);
         }
     }
 
-    private String format(String number, int numOfDigits){
+    private String formatMilliseconds(Double milliseconds) {
+        if(milliseconds > 1000) {
+            int reducer = milliseconds.intValue() / 1000;
+            Integer result = milliseconds.intValue() - reducer * 1000;
+            return format(result.toString(), 3);
+        }else{
+            String number = Integer.toString(milliseconds.intValue());
+            return format(number, 3);
+        }
+    }
+
+    private String format(String number, int numOfDigits) {
         return String.format("%" + numOfDigits + "s", number).replace(" ", "0");
     }
 }
