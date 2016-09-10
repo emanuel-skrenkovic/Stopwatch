@@ -35,11 +35,6 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void result){
-        super.onPostExecute(result);
-    }
-
-    @Override
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
         timer.setText(values[0]);
@@ -51,19 +46,19 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
 
     private String formatSeconds(Double seconds, Double minutes) {
         if(seconds.intValue() >= 60){
-            Integer result = seconds.intValue() - minutes.intValue() * 60;
-            return format(result.toString(), 2);
+            int result = seconds.intValue() - minutes.intValue() * 60;
+            return format(Integer.toString(result), 2);
         }else{
-            Integer result = seconds.intValue();
-            return format(result.toString(), 2);
+            int result = seconds.intValue();
+            return format(Integer.toString(result), 2);
         }
     }
 
     private String formatMilliseconds(Double milliseconds) {
         if(milliseconds > 1000) {
             int reducer = milliseconds.intValue() / 1000;
-            Integer result = milliseconds.intValue() - reducer * 1000;
-            return format(result.toString(), 3);
+            int result = milliseconds.intValue() - reducer * 1000;
+            return format(Integer.toString(result), 3);
         }else{
             String number = Integer.toString(milliseconds.intValue());
             return format(number, 3);

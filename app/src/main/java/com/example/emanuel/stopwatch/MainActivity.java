@@ -1,5 +1,6 @@
 package com.example.emanuel.stopwatch;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean wasRunning = false;
     private ToggleButton startButton;
     private TextView timer;
+    private TimeUpdater timeUpdater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +26,6 @@ public class MainActivity extends AppCompatActivity {
         Button resetButton = (Button) findViewById(R.id.resetButton);
 
         startButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            private TimeUpdater timeUpdater;
-
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
@@ -73,6 +72,13 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         wasRunning = startButton.isChecked();
         startButton.setChecked(false);
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        if(timeUpdater != null && timeUpdater.getStatus() == AsyncTask.Status.RUNNING)
+            timeUpdater.cancel(true);
     }
 }
 
