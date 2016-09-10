@@ -7,10 +7,10 @@ public class Time {
     private double milliseconds;
 
     public Time(String time) {
-        String[] buffer = time.split(":");
-        this.minutes = Double.parseDouble(buffer[0]);
-        this.seconds = Double.parseDouble(buffer[1]);
-        this.milliseconds = Double.parseDouble(buffer[2]);
+        String[] temp = time.split(":");
+        this.minutes = Double.parseDouble(temp[0]);
+        this.seconds = Double.parseDouble(temp[1]);
+        this.milliseconds = Double.parseDouble(temp[2]);
     }
 
     public double getMinutes(){
