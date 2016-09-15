@@ -17,7 +17,7 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
     protected Void doInBackground(Void... params) {
         long startCount = System.nanoTime();
 
-        while(!(this.isCancelled())){
+        while(!(this.isCancelled())) {
             double timeDiff = System.nanoTime() - startCount +
                             (startTime.getMinutes() * 6e10) +
                             (startTime.getSeconds() * 1e9) +
@@ -40,7 +40,7 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
         timer.setText(values[0]);
     }
 
-    private String formatMinutes(Double minutes){
+    private String formatMinutes(Double minutes) {
         return format(Integer.toString(minutes.intValue()), 2);
     }
 
@@ -59,7 +59,7 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
             int reducer = milliseconds.intValue() / 1000;
             int result = milliseconds.intValue() - reducer * 1000;
             return format(Integer.toString(result), 3);
-        }else{
+        }else {
             String number = Integer.toString(milliseconds.intValue());
             return format(number, 3);
         }

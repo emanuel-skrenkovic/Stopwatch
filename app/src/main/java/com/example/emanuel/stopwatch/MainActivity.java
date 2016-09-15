@@ -1,6 +1,7 @@
 package com.example.emanuel.stopwatch;
 
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -41,19 +42,27 @@ public class MainActivity extends AppCompatActivity {
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startButton.setChecked(false);
-                timer.setText("00:00:000");
+                if(startButton.isChecked())
+                    startButton.setChecked(false);
+
+                (new Handler()).post(new Runnable() {
+                    @Override
+                    public void run(){
+                        timer.setText(R.string.zero_time);
+                    }
+
+                });
             }
         });
 
-        if(savedInstanceState != null){
+        if(savedInstanceState != null) {
             timer.setText(savedInstanceState.getCharSequence("time"));
             startButton.setChecked(savedInstanceState.getBoolean("isChecked"));
         }
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle savedInstanceState){
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
 
         savedInstanceState.putBoolean("isChecked",startButton.isChecked());
@@ -61,21 +70,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         if(wasRunning)
             startButton.setChecked(true);
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         wasRunning = startButton.isChecked();
         startButton.setChecked(false);
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         if(timeUpdater != null && timeUpdater.getStatus() == AsyncTask.Status.RUNNING)
             timeUpdater.cancel(true);
