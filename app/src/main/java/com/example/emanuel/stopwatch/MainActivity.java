@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if(isChecked) {
                     timeUpdater = new TimeUpdater(timer);
                     timeUpdater.execute();
                 }
@@ -47,10 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
                 (new Handler()).post(new Runnable() {
                     @Override
-                    public void run(){
+                    public void run() {
                         timer.setText(R.string.zero_time);
                     }
-
                 });
             }
         });
