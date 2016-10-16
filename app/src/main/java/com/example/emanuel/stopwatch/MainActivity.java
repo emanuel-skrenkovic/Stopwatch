@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
                 (new Handler()).post(new Runnable() {
                     @Override
                     public void run() {
-                        timer.setText(R.string.zero_time);
+                        if(timeUpdater.isCancelled())
+                            timer.setText(R.string.zero_time);
                     }
                 });
             }

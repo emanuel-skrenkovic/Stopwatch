@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/backgroundGrey"
     tools:context="com.example.emanuel.stopwatch.MainActivity">
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        android:layout_weight="4" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -14,9 +21,9 @@
         android:textSize="45sp"
         android:textColor="@android:color/white"
         android:id="@+id/timer"
-        android:layout_marginTop="170dp"
-        android:layout_marginBottom="70dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_weight="5"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_horizontal"/>
 
     <ToggleButton
         android:layout_width="wrap_content"
@@ -28,10 +35,10 @@
         android:textSize="22sp"
         android:background="?attr/selectableItemBackground"
         android:id="@+id/toggleButton"
-        android:layout_below="@+id/timer"
         android:layout_marginBottom="10dp"
-        android:layout_centerHorizontal="true"
-        android:padding="2dp" />
+        android:padding="2dp"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -41,10 +48,16 @@
         android:textSize="18sp"
         android:textColor="@android:color/white"
         android:id="@+id/resetButton"
-        android:layout_below="@+id/toggleButton"
-        android:layout_centerHorizontal="true"
         android:background="?attr/selectableItemBackground"
-        android:padding="2dp" />
+        android:padding="2dp"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"/>
 
-</RelativeLayout>
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        android:layout_weight="4" />
+
+</LinearLayout>
 
