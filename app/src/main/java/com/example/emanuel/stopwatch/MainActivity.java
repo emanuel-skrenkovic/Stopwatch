@@ -1,7 +1,6 @@
 package com.example.emanuel.stopwatch;
 
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -25,12 +24,13 @@ public class MainActivity extends AppCompatActivity {
         timer = (TextView) findViewById(R.id.timer);
         startButton = (ToggleButton) findViewById(R.id.toggleButton);
         Button resetButton = (Button) findViewById(R.id.resetButton);
+        final Stopwatch stopwatch = new Stopwatch();
 
         startButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    timeUpdater = new TimeUpdater(timer);
+                    timeUpdater = new TimeUpdater(timer, stopwatch);
                     timeUpdater.execute();
                 }
                 else {
@@ -42,15 +42,13 @@ public class MainActivity extends AppCompatActivity {
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(startButton.isChecked())
+                timeUpdater.restart(true);
+                if(startButton.isChecked()) {
                     startButton.setChecked(false);
-
-                (new Handler()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        timer.setText(R.string.zero_time);
-                    }
-                });
+                }
+                else {
+                    timer.setText(R.string.zero_time);
+                }
             }
         });
 

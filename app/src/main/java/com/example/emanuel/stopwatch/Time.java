@@ -6,6 +6,12 @@ public class Time {
     private double seconds;
     private double milliseconds;
 
+    public Time() {
+        this.minutes = 0;
+        this.seconds = 0;
+        this.milliseconds = 0;
+    }
+
     public Time(double minutes,
                 double seconds,
                 double milliseconds) {
@@ -25,7 +31,7 @@ public class Time {
         return minutes;
     }
 
-    public void setMinutes(long minutes){
+    public void setMinutes(double minutes){
         this.minutes = minutes;
     }
 
@@ -33,7 +39,7 @@ public class Time {
         return seconds;
     }
 
-    public void setSeconds(long seconds){
+    public void setSeconds(double seconds){
         this.seconds = seconds;
     }
 
@@ -41,7 +47,7 @@ public class Time {
         return milliseconds;
     }
 
-    public void setMilliseconds(long milliseconds){
+    public void setMilliseconds(double milliseconds){
         this.milliseconds = milliseconds;
     }
 
@@ -50,24 +56,19 @@ public class Time {
     }
 
     private String formatSeconds(Double seconds, Double minutes) {
-        if(seconds.intValue() >= 60){
-            int result = seconds.intValue() - minutes.intValue() * 60;
-            return format(Integer.toString(result), 2);
-        }else{
-            int result = seconds.intValue();
-            return format(Integer.toString(result), 2);
-        }
+        int result = (seconds.intValue() >= 60)
+                ? seconds.intValue() - minutes.intValue() * 60
+                : seconds.intValue();
+
+        return format(Integer.toString(result), 2);
     }
 
     private String formatMilliseconds(Double milliseconds) {
-        if(milliseconds > 1000) {
-            int reducer = milliseconds.intValue() / 1000;
-            int result = milliseconds.intValue() - reducer * 1000;
-            return format(Integer.toString(result), 3);
-        }else {
-            String number = Integer.toString(milliseconds.intValue());
-            return format(number, 3);
-        }
+        int result = (milliseconds > 1000)
+                ? milliseconds.intValue() - (milliseconds.intValue() / 1000) * 1000
+                : milliseconds.intValue();
+
+        return format(Integer.toString(result), 3);
     }
 
     private String format(String number, int numOfDigits) {

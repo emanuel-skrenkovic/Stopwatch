@@ -6,29 +6,22 @@ import android.widget.TextView;
 public class TimeUpdater extends AsyncTask<Void, String, Void> {
 
     private TextView timer;
-    private Time startTime;
+    private boolean restart = false;
+    private Stopwatch stopwatch;
 
-    public TimeUpdater(TextView timer) {
+    public TimeUpdater(TextView timer, Stopwatch stopwatch) {
         this.timer = timer;
-        startTime = new Time((String) timer.getText());
+        this.stopwatch = stopwatch;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        long startCount = System.nanoTime();
+        stopwatch.start();
 
-        while(!(this.isCancelled())) {
-            double timeDiff = System.nanoTime() - startCount +
-                            (startTime.getMinutes() * 6e10) +
-                            (startTime.getSeconds() * 1e9) +
-                            (startTime.getMilliseconds() * 1e6);
+        while(!(this.isCancelled()))
+            this.publishProgress(stopwatch.getElapsedTime().toString());
 
-            Time currentTime = new Time((timeDiff / 6e10),
-                    (timeDiff / 1e9),
-                    (timeDiff / 1e6));
-
-            this.publishProgress(currentTime.toString());
-        }
+        //stopwatch.pause();
         return null;
     }
 
@@ -36,5 +29,17 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
         timer.setText(values[0]);
+    }
+
+    @Override
+    protected void onCancelled() {
+        if(restart) {
+            stopwatch.restart();
+            timer.setText(R.string.zero_time);
+        }
+    }
+
+    public void restart(boolean restart) {
+        this.restart = restart;
     }
 }
