@@ -17,11 +17,8 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         stopwatch.start();
-
-        while(!(this.isCancelled()))
-            this.publishProgress(stopwatch.getElapsedTime().toString());
-
-        //stopwatch.pause();
+        while(!(isCancelled()))
+            this.publishProgress(stopwatch.getFormattedTime().toString());
         return null;
     }
 
@@ -33,13 +30,14 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
 
     @Override
     protected void onCancelled() {
+        stopwatch.pause();
         if(restart) {
             stopwatch.restart();
             timer.setText(R.string.zero_time);
         }
     }
 
-    public void restart(boolean restart) {
-        this.restart = restart;
+    public void restart() {
+        this.restart = true;
     }
 }

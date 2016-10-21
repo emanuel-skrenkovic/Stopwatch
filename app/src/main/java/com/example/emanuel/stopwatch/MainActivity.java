@@ -14,7 +14,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean wasRunning = false;
     private ToggleButton startButton;
     private TextView timer;
-    private TimeUpdater timeUpdater;
+    private TimeUpdater updater;
+    private Stopwatch stopwatch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,17 +25,19 @@ public class MainActivity extends AppCompatActivity {
         timer = (TextView) findViewById(R.id.timer);
         startButton = (ToggleButton) findViewById(R.id.toggleButton);
         Button resetButton = (Button) findViewById(R.id.resetButton);
-        final Stopwatch stopwatch = new Stopwatch();
+        stopwatch = new Stopwatch();
 
         startButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    timeUpdater = new TimeUpdater(timer, stopwatch);
-                    timeUpdater.execute();
+                    updater = new TimeUpdater(timer, stopwatch);
+                    updater.execute();
                 }
                 else {
-                    timeUpdater.cancel(true);
+                    if(updater != null)
+                        updater.cancel(true);
+                    stopwatch.pause();
                 }
             }
         });
@@ -42,11 +45,12 @@ public class MainActivity extends AppCompatActivity {
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                timeUpdater.restart(true);
+                if(updater != null)
+                    updater.restart();
                 if(startButton.isChecked()) {
                     startButton.setChecked(false);
-                }
-                else {
+                } else {
+                    stopwatch.restart();
                     timer.setText(R.string.zero_time);
                 }
             }
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(savedInstanceState != null) {
             timer.setText(savedInstanceState.getCharSequence("time"));
+            stopwatch.setStartTime(savedInstanceState.getString("time"));
             startButton.setChecked(savedInstanceState.getBoolean("isChecked"));
         }
     }
@@ -83,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(timeUpdater != null && timeUpdater.getStatus() == AsyncTask.Status.RUNNING)
-            timeUpdater.cancel(true);
+        if(updater != null && updater.getStatus() == AsyncTask.Status.RUNNING)
+            updater.cancel(true);
     }
 }
 
