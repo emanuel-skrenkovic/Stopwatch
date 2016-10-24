@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(savedInstanceState != null) {
             timer.setText(savedInstanceState.getCharSequence("time"));
-            stopwatch.setStartTime(savedInstanceState.getString("time"));
+            stopwatch.setStartTime(savedInstanceState.getDouble("pauseOffset"));
             startButton.setChecked(savedInstanceState.getBoolean("isChecked"));
         }
     }
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
 
         savedInstanceState.putBoolean("isChecked",startButton.isChecked());
-        savedInstanceState.putCharSequence("time",timer.getText());
+        savedInstanceState.putDouble("pauseOffset", stopwatch.getElapsedTime());
     }
 
     @Override
@@ -90,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if(updater != null && updater.getStatus() == AsyncTask.Status.RUNNING)
             updater.cancel(true);
+        if(stopwatch.isRunning())
+            stopwatch.pause();
     }
 }
 

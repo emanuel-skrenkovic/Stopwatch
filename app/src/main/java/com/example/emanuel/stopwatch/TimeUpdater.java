@@ -18,7 +18,7 @@ public class TimeUpdater extends AsyncTask<Void, String, Void> {
     protected Void doInBackground(Void... params) {
         stopwatch.start();
         while(!(isCancelled()))
-            this.publishProgress(stopwatch.getFormattedTime().toString());
+            this.publishProgress(stopwatch.getFormattedTime());
         return null;
     }
 
