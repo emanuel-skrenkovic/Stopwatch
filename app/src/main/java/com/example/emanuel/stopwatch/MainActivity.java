@@ -2,7 +2,6 @@ package com.example.emanuel.stopwatch;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -55,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if(savedInstanceState != null) {
-            Log.i("oncreate formattedTime", savedInstanceState.getString("formattedTime"));
-            Log.i("oncreate startingTime", Double.toString(savedInstanceState.getDouble("startingTime")));
             timer.setText(savedInstanceState.getString("formattedTime"));
             stopwatch.setStartTime(savedInstanceState.getDouble("startingTime"));
             startButton.setChecked(savedInstanceState.getBoolean("isChecked"));

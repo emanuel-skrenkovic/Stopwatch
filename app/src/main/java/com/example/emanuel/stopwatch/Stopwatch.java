@@ -1,8 +1,5 @@
 package com.example.emanuel.stopwatch;
 
-
-import android.util.Log;
-
 public class Stopwatch {
 
     private enum State { RUNNING, PAUSED }
@@ -10,6 +7,7 @@ public class Stopwatch {
     private State state;
 
     private double startCount;
+    private double currentTime;
     private double pauseOffset = 0;
 
     public Stopwatch() {
@@ -26,8 +24,7 @@ public class Stopwatch {
     public void pause() {
         if(state == State.RUNNING) {
             state = State.PAUSED;
-            pauseOffset = getElapsedTime();
-            Log.i("pause:", Double.toString(pauseOffset));
+            pauseOffset = currentTime;
         }
     }
 
@@ -44,18 +41,18 @@ public class Stopwatch {
         return pauseOffset;
     }
 
-    public double getElapsedTime() {
-        Log.i("getElapsedTime()", Double.toString(System.nanoTime() - startCount - pauseOffset));
-        return System.nanoTime() - startCount + pauseOffset;
+    public void getElapsedTime() {
+        currentTime = System.nanoTime() - startCount + pauseOffset;
     }
 
     public String getFormattedTime() {
         if(state == State.RUNNING) {
-            return formatMinutes(getElapsedTime() / 6e10) +
+            getElapsedTime();
+            return formatMinutes(currentTime / 6e10) +
                     ":" +
-                    formatSeconds(getElapsedTime() / 1e9) +
+                    formatSeconds(currentTime / 1e9) +
                     ":" +
-                    formatMilliseconds(getElapsedTime() / 1e6);
+                    formatMilliseconds(currentTime / 1e6);
         }
         return null;
     }
