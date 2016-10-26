@@ -8,7 +8,7 @@ public class Stopwatch {
 
     private double startCount;
     private double currentTime;
-    private double pauseOffset = 0;
+    private double pauseOffset;
 
     public Stopwatch() {
         state = State.PAUSED;
@@ -41,13 +41,17 @@ public class Stopwatch {
         return pauseOffset;
     }
 
-    public void getElapsedTime() {
-        currentTime = System.nanoTime() - startCount + pauseOffset;
+    public boolean isRunning() {
+        return state == State.RUNNING;
+    }
+
+    public double getElapsedTime() {
+        return System.nanoTime() - startCount + pauseOffset;
     }
 
     public String getFormattedTime() {
         if(state == State.RUNNING) {
-            getElapsedTime();
+            currentTime = getElapsedTime();
             return formatMinutes(currentTime / 6e10) +
                     ":" +
                     formatSeconds(currentTime / 1e9) +
@@ -58,11 +62,14 @@ public class Stopwatch {
     }
 
     public String getFormattedPausedTime() {
-        return formatMinutes(pauseOffset / 6e10) +
-                ":" +
-                formatSeconds(pauseOffset / 1e9) +
-                ":" +
-                formatMilliseconds(pauseOffset / 1e6);
+        if(state == State.PAUSED) {
+            return formatMinutes(pauseOffset / 6e10) +
+                    ":" +
+                    formatSeconds(pauseOffset / 1e9) +
+                    ":" +
+                    formatMilliseconds(pauseOffset / 1e6);
+        }
+        return null;
     }
 
     private String formatMinutes(Double minutes) {
@@ -70,19 +77,17 @@ public class Stopwatch {
     }
 
     private String formatSeconds(Double seconds) {
-        int result = (seconds.intValue() > 60)
+        return format(Integer.toString(
+                (seconds.intValue() > 60)
                 ? seconds.intValue() - (seconds.intValue() / 60) * 60
-                : seconds.intValue();
-
-        return format(Integer.toString(result), 2);
+                : seconds.intValue()), 2);
     }
 
     private String formatMilliseconds(Double milliseconds) {
-        int result = (milliseconds > 1000)
+        return format(Integer.toString(
+                (milliseconds > 1000)
                 ? milliseconds.intValue() - (milliseconds.intValue() / 1000) * 1000
-                : milliseconds.intValue();
-
-        return format(Integer.toString(result), 3);
+                : milliseconds.intValue()), 3);
     }
 
     private String format(String number, int numOfDigits) {

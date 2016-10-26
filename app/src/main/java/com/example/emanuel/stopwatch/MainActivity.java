@@ -54,17 +54,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if(savedInstanceState != null) {
-            timer.setText(savedInstanceState.getString("formattedTime"));
-            stopwatch.setStartTime(savedInstanceState.getDouble("startingTime"));
             startButton.setChecked(savedInstanceState.getBoolean("isChecked"));
+            stopwatch.setStartTime(savedInstanceState.getDouble("startingTime"));
+            timer.setText(savedInstanceState.getString("formattedTime"));
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-
-        stopwatch.pause();
+        if(stopwatch.isRunning())
+            stopwatch.pause();
 
         savedInstanceState.putDouble("startingTime", stopwatch.getPausedTime());
         savedInstanceState.putString("formattedTime", stopwatch.getFormattedPausedTime());
