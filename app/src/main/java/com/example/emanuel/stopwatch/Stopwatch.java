@@ -1,5 +1,8 @@
 package com.example.emanuel.stopwatch;
 
+
+import android.util.Log;
+
 public class Stopwatch {
 
     private enum State { RUNNING, PAUSED }
@@ -13,14 +16,10 @@ public class Stopwatch {
         state = State.PAUSED;
     }
 
-    public double getElapsedTime() {
-        return System.nanoTime() - startCount + pauseOffset;
-    }
-
     public void start() {
         if(state == State.PAUSED) {
-            startCount = System.nanoTime();
             state = State.RUNNING;
+            startCount = System.nanoTime();
         }
     }
 
@@ -28,6 +27,7 @@ public class Stopwatch {
         if(state == State.RUNNING) {
             state = State.PAUSED;
             pauseOffset = getElapsedTime();
+            Log.i("pause:", Double.toString(pauseOffset));
         }
     }
 
@@ -36,33 +36,45 @@ public class Stopwatch {
         pauseOffset = 0;
     }
 
-    public boolean isRunning() {
-        return (state == State.RUNNING);
-    }
-
     public void setStartTime(double offset) {
         this.pauseOffset = offset;
+    }
+
+    public double getPausedTime() {
+        return pauseOffset;
+    }
+
+    public double getElapsedTime() {
+        Log.i("getElapsedTime()", Double.toString(System.nanoTime() - startCount - pauseOffset));
+        return System.nanoTime() - startCount + pauseOffset;
     }
 
     public String getFormattedTime() {
         if(state == State.RUNNING) {
             return formatMinutes(getElapsedTime() / 6e10) +
                     ":" +
-                    formatSeconds(getElapsedTime() / 1e9,
-                            getElapsedTime() / 6e10) +
+                    formatSeconds(getElapsedTime() / 1e9) +
                     ":" +
                     formatMilliseconds(getElapsedTime() / 1e6);
         }
         return null;
     }
 
+    public String getFormattedPausedTime() {
+        return formatMinutes(pauseOffset / 6e10) +
+                ":" +
+                formatSeconds(pauseOffset / 1e9) +
+                ":" +
+                formatMilliseconds(pauseOffset / 1e6);
+    }
+
     private String formatMinutes(Double minutes) {
         return format(Integer.toString(minutes.intValue()), 2);
     }
 
-    private String formatSeconds(Double seconds, Double minutes) {
-        int result = (seconds.intValue() >= 60)
-                ? seconds.intValue() - minutes.intValue() * 60
+    private String formatSeconds(Double seconds) {
+        int result = (seconds.intValue() > 60)
+                ? seconds.intValue() - (seconds.intValue() / 60) * 60
                 : seconds.intValue();
 
         return format(Integer.toString(result), 2);

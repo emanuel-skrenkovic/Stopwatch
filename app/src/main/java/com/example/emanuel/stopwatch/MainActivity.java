@@ -1,8 +1,8 @@
 package com.example.emanuel.stopwatch;
 
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -11,7 +11,6 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    private boolean wasRunning = false;
     private ToggleButton startButton;
     private TextView timer;
     private TimeUpdater updater;
@@ -35,9 +34,7 @@ public class MainActivity extends AppCompatActivity {
                     updater.execute();
                 }
                 else {
-                    if(updater != null)
-                        updater.cancel(true);
-                    stopwatch.pause();
+                    updater.cancel(true);
                 }
             }
         });
@@ -47,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(updater != null)
                     updater.restart();
+
                 if(startButton.isChecked()) {
                     startButton.setChecked(false);
                 } else {
@@ -57,8 +55,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if(savedInstanceState != null) {
-            timer.setText(savedInstanceState.getCharSequence("time"));
-            stopwatch.setStartTime(savedInstanceState.getDouble("pauseOffset"));
+            Log.i("oncreate formattedTime", savedInstanceState.getString("formattedTime"));
+            Log.i("oncreate startingTime", Double.toString(savedInstanceState.getDouble("startingTime")));
+            timer.setText(savedInstanceState.getString("formattedTime"));
+            stopwatch.setStartTime(savedInstanceState.getDouble("startingTime"));
             startButton.setChecked(savedInstanceState.getBoolean("isChecked"));
         }
     }
@@ -67,31 +67,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
 
+        stopwatch.pause();
+
+        savedInstanceState.putDouble("startingTime", stopwatch.getPausedTime());
+        savedInstanceState.putString("formattedTime", stopwatch.getFormattedPausedTime());
         savedInstanceState.putBoolean("isChecked",startButton.isChecked());
-        savedInstanceState.putDouble("pauseOffset", stopwatch.getElapsedTime());
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(wasRunning)
-            startButton.setChecked(true);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        wasRunning = startButton.isChecked();
-        startButton.setChecked(false);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(updater != null && updater.getStatus() == AsyncTask.Status.RUNNING)
+        if(updater != null)
             updater.cancel(true);
-        if(stopwatch.isRunning())
-            stopwatch.pause();
     }
 }
 
